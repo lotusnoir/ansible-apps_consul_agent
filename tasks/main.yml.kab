@@ -1,0 +1,27 @@
+---
+### Import vars
+- name: add OS specific variables
+  ansible.builtin.include_vars: '{{ vars_file }}'
+  with_first_found:
+    - files:
+        - '{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml'
+        - '{{ ansible_distribution }}.yml'
+        - '{{ ansible_os_family }}.yml'
+        - 'main.yml'
+      paths:
+        - 'vars'
+  loop_control:
+    loop_var: vars_file
+
+
+- import_tasks: setup_debian.yml
+  when: ansible_os_family == "Debian"
+
+- import_tasks: setup_redhat.yml
+  when: ansible_os_family == "RedHat"
+
+- import_tasks: create_user.yml
+
+- import_tasks: install.yml
+
+- import_tasks: services.yml

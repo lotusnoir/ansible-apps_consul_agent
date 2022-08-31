@@ -1,0 +1,47 @@
+---
+- name: "Create needed dirs"
+  file:
+    path: "{{ item|safe|trim }}"
+    state: directory
+    owner: "{{ consul_agent_user }}"
+    group: "{{ consul_agent_group }}"
+    mode: 0755
+  with_items:
+    - "{{ consul_agent_config_dir }}"
+    - "{{ consul_agent_data_dir }}"
+    - "{{ consul_agent_install_dir }}"
+
+
+- name: "Configuring consul"
+  template:
+    src: consul.hcl.j2
+    dest: "{{ consul_agent_config_dir }}/consul.hcl"
+    owner: "{{ consul_agent_user }}"
+    group: "{{ consul_agent_group }}"
+    mode: 0644
+  become: true
+  notify:
+    - restart consul-agent
+
+
+
+- name: "Install HashiCorp Consul"
+  unarchive:
+    src: "{{ 'https://releases.hashicorp.com/consul/'+consul_agent_version|string+'/consul_'+consul_agent_version|string+'_'+consul_agent_distrib+'_amd64.zip' }}"
+    dest: "{{ consul_agent_install_dir }}"
+    remote_src: true
+  become: true
+
+- meta: end_host
+
+# We create the consul data folder
+- name: config | creating consul data folder
+  file:
+    path: "{{ consul_client_configuration.data_dir|default('/var/consul/data') }}"
+    owner: "{{ consul_client_user_info.user }}"
+    group: "{{ consul_client_user_info.group }}"
+    recurse: yes
+    state: directory
+  become: true
+
+

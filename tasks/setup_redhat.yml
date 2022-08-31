@@ -1,0 +1,19 @@
+---
+- name: "REDHAT | Enabling EPEL Repo"
+  yum:
+    name: epel-release
+    state: present
+  become: true
+  when: ansible_distribution != "Fedora"
+
+- name: "REDHAT | Installing requirements"
+  yum:
+    name:
+      - python-devel
+      - python-pip
+      - jq
+      - tree
+      - unzip
+    state: present
+  become: true
+  when: ansible_distribution != "Fedora"

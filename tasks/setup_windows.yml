@@ -1,0 +1,16 @@
+---
+- name: "Download HashiCorp Consul for windows locally"
+  unarchive:
+    src: "{{ 'https://releases.hashicorp.com/consul/'+consul_agent_version|string+'/consul_'+consul_agent_version|string+'_windows_amd64.zip' }}"
+    dest: "/tmp"
+
+- name: Copy consul.exe
+  ansible.windows.win_copy:
+    src: "/tmp/consul.exe"
+    dest: c:\consul\consul.exe
+
+
+- name: Create a file from a Jinja2 template
+  ansible.windows.win_template:
+    src: consul.hcl.j2 
+    dest: c:\consul\consul.d\consul.hcl

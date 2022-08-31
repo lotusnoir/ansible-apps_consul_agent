@@ -1,0 +1,16 @@
+---
+- name: "DEBIAN | Update Apt Cache"
+  apt:
+    update_cache: true
+  become: true
+
+- name: "DEBIAN | Installing requirements"
+  apt:
+    name:
+      - dnsutils
+      - jq
+      - tree
+      - unzip
+      - uuid-runtime
+    state: present
+  become: true

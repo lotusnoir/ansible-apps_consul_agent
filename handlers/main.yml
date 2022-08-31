@@ -1,0 +1,12 @@
+---
+- name: reload systemd
+  systemd:
+    name: consul-client
+    daemon_reload: yes
+  become: true
+
+- name: restart consul-agent
+  service:
+    name: consul-client
+    state: restarted
+  become: true

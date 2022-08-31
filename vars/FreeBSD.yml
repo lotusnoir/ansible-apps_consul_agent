@@ -1,0 +1,3 @@
+---
+consul_agent_distrib: freebsd
+consul_agent_install_dir: /usr/local/bin/consul
