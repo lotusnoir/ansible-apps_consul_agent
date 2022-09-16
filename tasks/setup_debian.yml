@@ -1,11 +1,6 @@
 ---
-- name: "DEBIAN | Update Apt Cache"
-  apt:
-    update_cache: true
-  become: true
-
 - name: "DEBIAN | Installing requirements"
-  apt:
+  ansible.builtin.apt:
     name:
       - dnsutils
       - jq

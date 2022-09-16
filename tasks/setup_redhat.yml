@@ -1,19 +1,18 @@
 ---
-- name: "REDHAT | Enabling EPEL Repo"
-  yum:
-    name: epel-release
+- name: "REDHAT | Import EPEL GPG key."
+  ansible.builtin.rpm_key:
+    key: "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}"
     state: present
   become: true
-  when: ansible_distribution != "Fedora"
+
+- name: "REDHAT | Installing epel-release"
+  ansible.builtin.yum:
+    name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
+    state: present
+  become: true
 
 - name: "REDHAT | Installing requirements"
-  yum:
-    name:
-      - python-devel
-      - python-pip
-      - jq
-      - tree
-      - unzip
+  ansible.builtin.yum:
+    name: "{{ consul_agent_pkg_requirements }}"
     state: present
   become: true
-  when: ansible_distribution != "Fedora"

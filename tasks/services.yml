@@ -1,6 +1,6 @@
 ---
 - name: services | Configuring Consul Client Service (upstart)
-  template:
+  ansible.builtin.template:
     src: etc/init/consul-client.conf.j2
     dest: /etc/init/consul-client.conf
     owner: root
@@ -11,7 +11,7 @@
   when: ansible_service_mgr == "upstart"
 
 - name: services | Configuring Consul Client Service (systemd)
-  template:
+  ansible.builtin.template:
     src: etc/systemd/system/consul-client.service.j2
     dest: /etc/systemd/system/consul-client.service
     owner: root
@@ -24,7 +24,7 @@
   when: ansible_service_mgr == "systemd"
 
 - name: services | Ensuring Consul Client Service is Enabled and Starts on Boot
-  service:
+  ansible.builtin.service:
     name: consul-client
     enabled: true
   become: true

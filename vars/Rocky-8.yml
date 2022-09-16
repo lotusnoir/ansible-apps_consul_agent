@@ -1,0 +1,7 @@
+---
+consul_agent_pkg_requirements:
+  - python3-devel
+  - python3-pip
+  - jq
+  - tree
+  - unzip

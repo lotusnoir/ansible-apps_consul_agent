@@ -1,12 +1,12 @@
 ---
 - name: "Creating consul user group"
-  group:
+  ansible.builtin.group:
     name: "{{ consul_agent_group }}"
     state: present
   become: true
 
 - name: "Creating consul user"
-  user:
+  ansible.builtin.user:
     createhome: false
     group: "{{ consul_agent_group }}"
     name: "{{ consul_agent_user }}"

@@ -1,12 +1,12 @@
 ---
 - name: reload systemd
-  systemd:
-    name: consul-client
-    daemon_reload: yes
+  ansible.builtin.systemd:
+    name: consul
+    daemon_reload: true
   become: true
 
 - name: restart consul-agent
-  service:
-    name: consul-client
+  ansible.builtin.service:
+    name: consul
     state: restarted
   become: true

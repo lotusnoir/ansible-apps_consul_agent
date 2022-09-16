@@ -5,7 +5,7 @@ consul_agent_group: consul
 consul_agent_user: consul
 
 consul_agent_config_dir: /opt/consul.d
-consul_agent_data_dir: /data/consul
+consul_agent_data_dir: /opt/consul
 
 consul_client_configuration: |
   data_dir = "{{ consul_agent_data_dir }}"
@@ -13,15 +13,15 @@ consul_client_configuration: |
   verify_server_hostname = false
   leave_on_terminate = false
   disable_update_check = true
-  
+
   ports {
     grpc = 8502
   }
-  
+
   connect {
     enabled = true
   }
-  
+
   telemetry {
     prometheus_retention_time = "2m"
     disable_hostname = true
