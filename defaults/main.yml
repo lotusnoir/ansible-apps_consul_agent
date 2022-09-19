@@ -1,11 +1,11 @@
 ---
 consul_agent_version: 1.12.2
-
 consul_agent_group: consul
 consul_agent_user: consul
-
 consul_agent_config_dir: /opt/consul.d
 consul_agent_data_dir: /opt/consul
+
+consul_agent_systemd_args: ""
 
 consul_client_configuration: |
   data_dir = "{{ consul_agent_data_dir }}"
