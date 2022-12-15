@@ -1,5 +1,5 @@
 ---
-consul_agent_version: 1.12.2
+consul_agent_version: 1.14.2
 consul_agent_group: consul
 consul_agent_user: consul
 consul_agent_config_dir: /opt/consul.d
