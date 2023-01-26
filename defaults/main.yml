@@ -7,22 +7,47 @@ consul_agent_data_dir: /opt/consul
 
 consul_agent_systemd_args: ""
 
+consul_servers: ['10.1.81.163', '10.1.81.197', '10.1.81.198']
 consul_client_configuration: |
   data_dir = "{{ consul_agent_data_dir }}"
   encrypt = "qDOPBEr+/oUVeOFQOnVypxwDaHzLrD+lvjo5vCEBbZ0="
-  verify_server_hostname = false
   leave_on_terminate = false
   disable_update_check = true
 
+  log_json = true
+  log_level = "warn"
+
   ports {
+    dns = 53
     grpc = 8502
+  }
+
+  discovery_max_stale = "1m"
+  recursors = ["10.1.80.155", "10.1.80.156", "10.1.98.102"]
+  dns_config {
+    recursor_strategy = "sequential"
+    use_cache = true
+    allow_stale = true
+    max_stale = "1m"
+    cache_max_age = "1m"
+    node_ttl = "1m"
   }
 
   connect {
     enabled = true
   }
 
+  limits {
+    http_max_conns_per_client = 500
+  }
+
   telemetry {
     prometheus_retention_time = "2m"
     disable_hostname = true
+  }
+
+  tls {
+    internal_rpc {
+      verify_server_hostname = false
+    }
   }
