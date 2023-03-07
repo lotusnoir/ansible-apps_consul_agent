@@ -26,6 +26,21 @@ ansible-lint:
   script:
     - ansible-lint .
 
+mega-linter:
+  stage: checks
+  image: oxsecurity/megalinter:v6
+  script: ["true"]
+  allow_failure: true
+  variables:
+    DEFAULT_WORKSPACE: ${CI_PROJECT_DIR}
+    REPORT_OUTPUT_FOLDER: ${CI_PROJECT_DIR}/megalinter-reports
+  artifacts:
+    when: always
+    paths:
+      - megalinter-reports
+    expire_in: 1 day
+
+
 ######################################################
 # RUN MOLECULE FOR FULL TEST SCENARIO
 ######################################################

@@ -1,6 +1,6 @@
 ---
-- name: "Check if EPEL repo is already configured"
-  stat:
+- name: "REDHAT | Check if EPEL repo is already configured"
+  ansible.builtin.stat:
     path: "/etc/yum.repos.d/epel.repo"
   register: epel_repo
 
