@@ -19,6 +19,8 @@ none
 
 See [variables](/defaults/main.yml) for more details.
 
+With default variables, this role assume you will just install consul agent binary. You need to set the config variables like in the exemple in order to configure agent and systemd.
+
 ## Examples
 
         ---
@@ -28,6 +30,16 @@ See [variables](/defaults/main.yml) for more details.
           gather_facts: true
           roles:
             - role: ansible-apps_consul_agent
+          vars: 
+            consul_agent_config: true
+            consul_agent_systemd_args: '-advertise "{{ ansible_default_ipv4.address }}" -bind "{{ ansible_default_ipv4.address }}" -client "0.0.0.0" -datacenter "mysite" -retry-join "10.1.1.1""'
+            consul_client_configuration: | 
+              data_dir = "{{ consul_agent_data_dir }}"
+              leave_on_terminate = false
+              disable_update_check = true
+              log_json = true
+              log_level = "warn"
+
 
 
 ## License
