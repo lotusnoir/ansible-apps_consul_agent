@@ -34,6 +34,10 @@
     group: "{{ consul_agent_group }}"
     mode: 0644
   become: true
+  when:
+    - consul_client_configuration is defined
+    - consul_client_configuration | length > 0
+    - consul_agent_config | bool
   notify:
     - restart consul-agent
 
@@ -45,6 +49,8 @@
     group: "{{ consul_agent_group }}"
     mode: 0644
   become: true
+  when:
+    - consul_agent_config | bool
   notify:
     - restart consul-agent
 
@@ -54,3 +60,5 @@
     name: consul
     state: started
     enabled: true
+  when:
+    - consul_agent_config | bool
