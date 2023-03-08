@@ -25,6 +25,8 @@
     dest: "{{ consul_agent_install_dir }}"
     remote_src: true
   become: true
+  notify:
+    - restart consul-agent
 
 - name: "Configuring consul"
   ansible.builtin.template:
@@ -52,6 +54,7 @@
   when:
     - consul_agent_config | bool
   notify:
+    - reload systemd
     - restart consul-agent
 
 - name: "Start consul-agent"
