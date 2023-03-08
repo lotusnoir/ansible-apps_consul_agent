@@ -33,7 +33,7 @@ With default variables, this role assume you will just install consul agent bina
           vars: 
             consul_agent_config: true
             consul_agent_systemd_args: '-advertise "{{ ansible_default_ipv4.address }}" -bind "{{ ansible_default_ipv4.address }}" -client "0.0.0.0" -datacenter "mysite" -retry-join "10.1.1.1""'
-            consul_client_configuration: | 
+            consul_client_configuration: |
               data_dir = "{{ consul_agent_data_dir }}"
               leave_on_terminate = false
               disable_update_check = true
