@@ -7,12 +7,12 @@ consul_agent_config_dir: /opt/consul.d
 consul_agent_data_dir: /opt/consul
 
 ### Config
-consul_agent_config: false
+consul_agent_config: true
 
 #consul_agent_systemd_args: '-advertise "{{ ansible_default_ipv4.address }}" -bind "{{ ansible_default_ipv4.address }}" -client "0.0.0.0" -datacenter "mysite" -retry-join  "10.1.1.1" -retry-  join "10.1.2.3" -retry-join "10.1.2.3"'
 
-#consul_client_configuration: |
-#  data_dir = "{{ consul_agent_data_dir }}"
+consul_client_configuration: |
+  data_dir = "{{ consul_agent_data_dir }}"
 #  log_json = true
 #  log_level = "warn"
 #  encrypt = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
