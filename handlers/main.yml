@@ -11,4 +11,4 @@
     state: restarted
   become: true
   when:
-    - consul_agent_config | bool
+    - consul_agent_manage_config | bool

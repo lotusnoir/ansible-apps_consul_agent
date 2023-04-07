@@ -30,14 +30,27 @@ With default variables, this role assume you will just install consul agent bina
           roles:
             - role: ansible-apps_consul_agent
           vars:
-            consul_agent_config: true
-            consul_agent_systemd_args: '-advertise "{{ ansible_default_ipv4.address }}" -bind "{{ ansible_default_ipv4.address }}" -client "0.0.0.0" -datacenter "mysite" -retry-join "10.1.1.1""'
-            consul_client_configuration: |
+            consul_agent_manage_config: true
+            consul_agent_systemd_args: '-advertise "{{ ansible_default_ipv4.address }}" -bind "{{ ansible_default_ipv4.address }}" -client "0.0.0.0" -datacenter "mysite" -retry-join "10.1.1.1"'
+            consul_client_config: |
               data_dir = "{{ consul_agent_data_dir }}"
               leave_on_terminate = false
               disable_update_check = true
               log_json = true
               log_level = "warn"
+            consul_agent_config_d:
+              exporter:
+                services:
+                  - name: node-exporter
+                    port: 9100
+                    tags:
+                      - prometheus_exporter
+                    checks:
+                      - name: node-exporter-tcp
+                        tcp: 127.0.0.1:9100
+                        interval: 1s
+                        timeout: 900ms
+                        failures_before_critical: 3
 
 
 

@@ -37,9 +37,21 @@
     mode: 0644
   become: true
   when:
-    - consul_client_configuration is defined
-    - consul_client_configuration | length > 0
-    - consul_agent_config | bool
+    - consul_agent_config is defined
+    - consul_agent_config | length > 0
+    - consul_agent_manage_config | bool
+  notify:
+    - restart consul-agent
+
+- name: "Create consul.d file"
+  ansible.builtin.template:
+    src: consul_config_d.json.j2
+    dest: "{{ consul_agent_config_dir }}/{{ item }}.json"
+    owner: "{{ consul_agent_user }}"
+    group: "{{ consul_agent_group }}"
+    mode: 0644
+  with_items:
+    "{{ consul_agent_config_d }}"
   notify:
     - restart consul-agent
 
@@ -52,7 +64,7 @@
     mode: 0644
   become: true
   when:
-    - consul_agent_config | bool
+    - consul_agent_manage_config | bool
   notify:
     - reload systemd
     - restart consul-agent
@@ -64,4 +76,4 @@
     state: started
     enabled: true
   when:
-    - consul_agent_config | bool
+    - consul_agent_manage_config | bool

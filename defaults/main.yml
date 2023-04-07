@@ -7,11 +7,11 @@ consul_agent_config_dir: /opt/consul.d
 consul_agent_data_dir: /opt/consul
 
 ### Config
-consul_agent_config: true
+consul_agent_manage_config: true
 
 #consul_agent_systemd_args: '-advertise "{{ ansible_default_ipv4.address }}" -bind "{{ ansible_default_ipv4.address }}" -client "0.0.0.0" -datacenter "mysite" -retry-join  "10.1.1.1" -retry-  join "10.1.2.3" -retry-join "10.1.2.3"'
 
-consul_client_configuration: |
+consul_agent_config: |
   data_dir = "{{ consul_agent_data_dir }}"
 #  log_json = true
 #  log_level = "warn"
@@ -54,3 +54,42 @@ consul_client_configuration: |
 #      verify_server_hostname = false
 #    }
 #  }
+
+consul_agent_config_d:
+#  filename1:
+#    services:
+#      - name: servicename1
+#        address: 10.1.1.1
+#        port: 8080
+#        tags:
+#          - traefik.enable=true
+#          - traefik.http.routers.kafka-ui.tls=true
+#          - traefik.http.routers.kafka-ui.entrypoints=websecureprive
+#          - traefik.http.routers.kafka-ui.rule=Host(`kafka-ui.int.test.fr`)
+#          - traefik.http.services.kafka-ui.loadbalancer.sticky.cookie.name=sticky_session
+#          - traefik.http.services.kafka-ui.loadbalancer.sticky.cookie.secure=true
+#          - traefik.http.services.kafka-ui.loadbalancer.sticky.cookie.httpOnly=true
+#          - traefik.http.middlewares.oidc-kafka-ui.plugin.oidcAuth.source=keycloak-test
+#          - traefik.http.middlewares.oidc-kafka-ui.plugin.oidcAuth.session.secret=q94xExq3wWJQF2J9
+#          - traefik.http.middlewares.oidc-kafka-ui.plugin.oidcAuth.redirectUrl=/callback
+#          - traefik.http.routers.kafka-ui.middlewares=oidc-kafka-ui
+#          - traefik.http.middlewares.oidc-kafka-ui.plugin.oidcAuth.claims=Contains(`realm_access.roles`,`kafka-administrateur`)
+#        meta: {}
+#        checks:
+#          - name: inframaster-val-rabbitmq-tcp
+#            tcp: 10.1.85.56:15672
+#            interval: 1s
+#            timeout: 900ms
+#            failures_before_critical: 3
+#  exporter:
+#    services:
+#      - name: node-exporter
+#        port: 9100
+#        tags:
+#          - prometheus_exporter
+#        checks:
+#          - name: node-exporter-tcp
+#            tcp: 127.0.0.1:9100
+#            interval: 1s
+#            timeout: 900ms
+#            failures_before_critical: 3
