@@ -17,7 +17,6 @@
   with_items:
     - "{{ consul_agent_config_dir }}"
     - "{{ consul_agent_data_dir }}"
-    - "{{ consul_agent_install_dir }}"
 
 - name: "Install HashiCorp Consul"
   ansible.builtin.unarchive:
