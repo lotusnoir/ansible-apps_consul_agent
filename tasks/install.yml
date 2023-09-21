@@ -1,9 +1,5 @@
 ---
-- import_tasks: setup_debian.yml
-  when: ansible_os_family == "Debian"
-
-- import_tasks: setup_redhat.yml
-  when: ansible_os_family in ["RedHat", "Rocky", "OracleLinux"]
+- include_tasks: "setup_{{ ansible_facts.os_family | lower }}.yml"
 
 - import_tasks: create_user.yml
 

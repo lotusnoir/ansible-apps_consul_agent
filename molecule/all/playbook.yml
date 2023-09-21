@@ -4,11 +4,6 @@
   become: true
   any_errors_fatal: true
 
-  tasks:
-    - name: Include role
-      ansible.builtin.include_role:
-        name: ansible-apps_consul_agent
-
   vars:
     consul_agent_systemd_args: '-advertise "127.0.0.1" -bind "127.0.0.1" -client "0.0.0.0" -datacenter "mysite" -retry-join "10.1.1.1"'
     consul_agent_config: |
@@ -30,3 +25,8 @@
                 interval: 1s
                 timeout: 900ms
                 failures_before_critical: 3
+
+  tasks:
+    - name: Include role
+      ansible.builtin.include_role:
+        name: ansible-apps_consul_agent
