@@ -2,8 +2,8 @@
 consul_agent_distrib: linux
 consul_agent_install_dir: /usr/bin
 consul_agent_pkg_requirements:
-  - python3-devel
-  - python3-pip
+  - python-devel
+  - python-pip
   - jq
   - tree
   - unzip
