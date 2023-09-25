@@ -34,6 +34,9 @@ With default variables, this role assume you will just install consul agent bina
 
 ## Examples
 
+Install agent with a node_exporter configuration
+
+
         ---
         - hosts: apps_consul_agent
           become: true
