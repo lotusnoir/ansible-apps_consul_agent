@@ -23,3 +23,4 @@
 ### Install
 - name: Import install tasks
   ansible.builtin.import_tasks: install.yml
+  when: consul_agent_install | bool
