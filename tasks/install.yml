@@ -1,7 +1,9 @@
 ---
 - include_tasks: "setup_{{ ansible_os_family | lower }}.yml"
+  when: consul_agent_bin_install | bool
 
 - import_tasks: create_user.yml
+  when: consul_agent_user_install | bool
 
 - name: "Create needed dirs"
   ansible.builtin.file:
@@ -13,6 +15,7 @@
   with_items:
     - "{{ consul_agent_config_dir }}"
     - "{{ consul_agent_data_dir }}"
+  when: consul_agent_bin_install | bool
 
 - name: "Install HashiCorp Consul"
   ansible.builtin.unarchive:
@@ -22,6 +25,7 @@
   become: true
   notify:
     - restart consul-agent
+  when: consul_agent_bin_install | bool
 
 - name: "Configuring consul"
   ansible.builtin.template:
@@ -35,6 +39,7 @@
     - consul_agent_config is defined
     - consul_agent_config | length > 0
     - consul_agent_manage_config | bool
+    - consul_agent_bin_install | bool
   notify:
     - restart consul-agent
 
@@ -49,6 +54,9 @@
     "{{ consul_agent_config_d }}"
   notify:
     - restart consul-agent
+  when:
+    - consul_agent_config_d is defined
+    - consul_agent_config_d | length > 0
 
 - name: "Configuring consul systemd"
   ansible.builtin.template:
@@ -60,6 +68,7 @@
   become: true
   when:
     - consul_agent_manage_config | bool
+    - consul_agent_bin_install | bool
   notify:
     - reload systemd
     - restart consul-agent
@@ -72,3 +81,4 @@
     enabled: true
   when:
     - consul_agent_manage_config | bool
+    - consul_agent_bin_install | bool
