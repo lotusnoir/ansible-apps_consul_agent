@@ -12,3 +12,4 @@
   become: true
   when:
     - consul_agent_manage_config | bool
+    - consul_agent_bin_install | bool
