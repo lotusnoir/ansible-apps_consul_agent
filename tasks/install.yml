@@ -5,7 +5,7 @@
 - import_tasks: create_user.yml
   when: consul_agent_user_install | bool
 
-- name: "Create needed dirs"
+- name: "Create consul.d config dir"
   ansible.builtin.file:
     path: "{{ item|safe|trim }}"
     state: directory
@@ -14,6 +14,18 @@
     mode: 0755
   with_items:
     - "{{ consul_agent_config_dir }}"
+  when:
+    - consul_agent_config_d is defined
+    - consul_agent_config_d | length > 0
+
+- name: "Create consul config dir"
+  ansible.builtin.file:
+    path: "{{ item|safe|trim }}"
+    state: directory
+    owner: "{{ consul_agent_user }}"
+    group: "{{ consul_agent_group }}"
+    mode: 0755
+  with_items:
     - "{{ consul_agent_data_dir }}"
   when: consul_agent_bin_install | bool
 
