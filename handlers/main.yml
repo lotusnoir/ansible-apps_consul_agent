@@ -1,11 +1,11 @@
 ---
-- name: reload systemd
+- name: Reload systemd
   ansible.builtin.systemd:
     name: consul
     daemon_reload: true
   become: true
 
-- name: restart consul-agent
+- name: Restart consul-agent
   ansible.builtin.service:
     name: consul
     state: restarted

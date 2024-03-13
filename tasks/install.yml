@@ -1,13 +1,15 @@
 ---
-- include_tasks: "setup_{{ ansible_os_family | lower }}.yml"
+- name: Install binary
+  ansible.builtin.include_tasks: "setup_{{ ansible_os_family | lower }}.yml"
   when: consul_agent_bin_install | bool
 
-- import_tasks: create_user.yml
+- name: Create users
+  ansible.builtin.import_tasks: create_user.yml
   when: consul_agent_user_install | bool
 
 - name: "Create consul.d config dir"
   ansible.builtin.file:
-    path: "{{ item|safe|trim }}"
+    path: "{{ item | safe | trim }}"
     state: directory
     owner: "{{ consul_agent_user }}"
     group: "{{ consul_agent_group }}"
@@ -20,7 +22,7 @@
 
 - name: "Create consul config dir"
   ansible.builtin.file:
-    path: "{{ item|safe|trim }}"
+    path: "{{ item | safe | trim }}"
     state: directory
     owner: "{{ consul_agent_user }}"
     group: "{{ consul_agent_group }}"
@@ -35,8 +37,7 @@
     dest: "{{ consul_agent_install_dir }}"
     remote_src: true
   become: true
-  notify:
-    - restart consul-agent
+  notify: Restart consul-agent
   when: consul_agent_bin_install | bool
 
 - name: "Configuring consul"
@@ -52,8 +53,7 @@
     - consul_agent_config | length > 0
     - consul_agent_manage_config | bool
     - consul_agent_bin_install | bool
-  notify:
-    - restart consul-agent
+  notify: Restart consul-agent
 
 - name: "Create consul.d file"
   ansible.builtin.template:
@@ -64,8 +64,7 @@
     mode: 0644
   with_items:
     "{{ consul_agent_config_d }}"
-  notify:
-    - restart consul-agent
+  notify: Restart consul-agent
   when:
     - consul_agent_config_d is defined
     - consul_agent_config_d | length > 0
@@ -82,8 +81,8 @@
     - consul_agent_manage_config | bool
     - consul_agent_bin_install | bool
   notify:
-    - reload systemd
-    - restart consul-agent
+    - Reload systemd
+    - Restart consul-agent
 
 - name: "Start consul-agent"
   ansible.builtin.service:
