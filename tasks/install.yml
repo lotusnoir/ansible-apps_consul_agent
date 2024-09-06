@@ -13,7 +13,7 @@
     state: directory
     owner: "{{ consul_agent_user }}"
     group: "{{ consul_agent_group }}"
-    mode: 0755
+    mode: '0755'
   with_items:
     - "{{ consul_agent_config_dir }}"
   when:
@@ -26,7 +26,7 @@
     state: directory
     owner: "{{ consul_agent_user }}"
     group: "{{ consul_agent_group }}"
-    mode: 0755
+    mode: '0755'
   with_items:
     - "{{ consul_agent_data_dir }}"
   when: consul_agent_bin_install | bool
@@ -46,7 +46,7 @@
     dest: "{{ consul_agent_config_dir }}/consul.hcl"
     owner: "{{ consul_agent_user }}"
     group: "{{ consul_agent_group }}"
-    mode: 0644
+    mode: '0644'
   become: true
   when:
     - consul_agent_config is defined
@@ -61,7 +61,7 @@
     dest: "{{ consul_agent_config_dir }}/{{ item }}.json"
     owner: "{{ consul_agent_user }}"
     group: "{{ consul_agent_group }}"
-    mode: 0644
+    mode: '0644'
   with_items:
     "{{ consul_agent_config_d }}"
   notify: Restart consul-agent
@@ -75,7 +75,7 @@
     dest: "/etc/systemd/system/consul.service"
     owner: "{{ consul_agent_user }}"
     group: "{{ consul_agent_group }}"
-    mode: 0644
+    mode: '0644'
   become: true
   when:
     - consul_agent_manage_config | bool
