@@ -3,7 +3,7 @@
 consul_agent_bin_install: true
 consul_agent_user_install: true
 
-consul_agent_version: 1.17.2
+consul_agent_version: 1.20.2
 consul_agent_group: consul
 consul_agent_user: consul
 consul_agent_config_dir: /opt/consul.d
