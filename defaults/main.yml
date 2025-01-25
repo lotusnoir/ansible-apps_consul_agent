@@ -29,7 +29,7 @@ consul_agent_config: |
 #  }
 #
 #  discovery_max_stale = "1m"
-#  recursors = ["10.1.8.55", "10.1.0.12", "10.1.2.3"]
+#  recursors = ["10.1.3.4", "10.1.3.5", "10.1.2.3"]
 #  dns_config {
 #    recursor_strategy = "sequential"
 #    use_cache = true
@@ -73,14 +73,14 @@ consul_agent_config_d:
 #          - traefik.http.services.kafka-ui.loadbalancer.sticky.cookie.secure=true
 #          - traefik.http.services.kafka-ui.loadbalancer.sticky.cookie.httpOnly=true
 #          - traefik.http.middlewares.oidc-kafka-ui.plugin.oidcAuth.source=keycloak-test
-#          - traefik.http.middlewares.oidc-kafka-ui.plugin.oidcAuth.session.secret=q94xExq3wWJQF2J9
+#          - traefik.http.middlewares.oidc-kafka-ui.plugin.oidcAuth.session.secret=xxxxxxxx
 #          - traefik.http.middlewares.oidc-kafka-ui.plugin.oidcAuth.redirectUrl=/callback
 #          - traefik.http.routers.kafka-ui.middlewares=oidc-kafka-ui
 #          - traefik.http.middlewares.oidc-kafka-ui.plugin.oidcAuth.claims=Contains(`realm_access.roles`,`kafka-administrateur`)
 #        meta: {}
 #        checks:
-#          - name: inframaster-val-rabbitmq-tcp
-#            tcp: 10.1.85.56:15672
+#          - name: test-tcp
+#            tcp: 10.1.2.3:156
 #            interval: 1s
 #            timeout: 900ms
 #            failures_before_critical: 3
