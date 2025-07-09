@@ -1,17 +1,13 @@
 ---
 ### Install
-consul_agent_bin_install: true
-consul_agent_user_install: true
-
-consul_agent_version: 1.20.4
+consul_agent_version: "1.21.2"
 consul_agent_group: consul
 consul_agent_user: consul
 consul_agent_config_dir: /opt/consul.d
 consul_agent_data_dir: /opt/consul
+consul_agent_start_service: true
 
 ### Config
-consul_agent_manage_config: true
-
 # consul_agent_systemd_args: |-
 #   '-advertise "{{ ansible_default_ipv4.address }}" -bind "{{ ansible_default_ipv4.address }}" \
 #   -client "0.0.0.0" -datacenter "mysite" -retry-join  "10.1.1.1" -retry-  join "10.1.2.3" -retry-join "10.1.2.3"'
@@ -60,7 +56,7 @@ consul_agent_config: |
 #    }
 #  }
 
-consul_agent_config_d:
+consul_agent_config_d: ""
 #  filename1:
 #    services:
 #      - name: servicename1

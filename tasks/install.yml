@@ -1,44 +1,67 @@
 ---
-- name: Install binary
-  ansible.builtin.include_tasks: "setup_{{ ansible_os_family | lower }}.yml"
-  when: consul_agent_bin_install | bool
+- name: "Check for consul binary"
+  ansible.builtin.stat:
+    path: "{{ consul_agent_install_dir }}/consul"
+  changed_when: false
+  register: consul_install
 
-- name: Create users
-  ansible.builtin.import_tasks: create_user.yml
-  when: consul_agent_user_install | bool
+- name: "Get current version"
+  ansible.builtin.shell: |
+    set -o pipefail
+    {{ consul_agent_install_dir }}/consul --version | grep -oP 'Consul v\K[0-9.]+'
+  args:
+    executable: /bin/bash
+  changed_when: false
+  register: consul_install_version
+  when: consul_install.stat.exists
 
-- name: "Create consul.d config dir"
-  ansible.builtin.file:
-    path: "{{ item | safe | trim }}"
-    state: directory
-    owner: "{{ consul_agent_user }}"
-    group: "{{ consul_agent_group }}"
-    mode: '0755'
-  with_items:
-    - "{{ consul_agent_config_dir }}"
-  when:
-    - consul_agent_config_d is defined
-    - consul_agent_config_d | length > 0
+- name: "Install tasks"
+  when: (not consul_install.stat.exists) or (consul_install_version is defined and consul_agent_version not in consul_install_version.stdout)
+  block:
+    - name: "Create user"
+      ansible.builtin.include_tasks: create_user.yml
 
-- name: "Create consul config dir"
-  ansible.builtin.file:
-    path: "{{ item | safe | trim }}"
-    state: directory
-    owner: "{{ consul_agent_user }}"
-    group: "{{ consul_agent_group }}"
-    mode: '0755'
-  with_items:
-    - "{{ consul_agent_data_dir }}"
-  when: consul_agent_bin_install | bool
+    - name: "Create config dir"
+      ansible.builtin.file:
+        path: "{{ item | safe | trim }}"
+        state: directory
+        owner: "{{ consul_agent_user }}"
+        group: "{{ consul_agent_group }}"
+        mode: "0755"
+      loop:
+        - "{{ consul_agent_data_dir }}"
+        - "{{ consul_agent_config_dir }}"
 
-- name: "Install HashiCorp Consul"
-  ansible.builtin.unarchive:
-    src: "https://releases.hashicorp.com/consul/{{ consul_agent_version }}/consul_{{ consul_agent_version }}_{{ consul_agent_distrib }}_amd64.zip"
-    dest: "{{ consul_agent_install_dir }}"
-    remote_src: true
-  become: true
-  notify: Restart consul-agent
-  when: consul_agent_bin_install | bool
+    - name: "Install requirements"
+      ansible.builtin.include_tasks: "setup_{{ ansible_os_family | lower }}.yml"
+
+    - name: "Download binary"
+      ansible.builtin.get_url:
+        url: "https://releases.hashicorp.com/consul/{{ consul_agent_version }}/consul_{{ consul_agent_version }}_{{ consul_agent_distrib }}_amd64.zip"
+        dest: "/tmp/consul_{{ consul_agent_version }}_{{ consul_agent_distrib }}_amd64.zip"
+        timeout: 60
+        mode: "0644"
+
+    - name: "Install binary"
+      ansible.builtin.unarchive:
+        src: "/tmp/consul_{{ consul_agent_version }}_{{ consul_agent_distrib }}_amd64.zip"
+        dest: "{{ consul_agent_install_dir }}"
+        remote_src: true
+        owner: "{{ consul_agent_user }}"
+        group: "{{ consul_agent_group }}"
+        mode: "0755"
+      notify: Restart consul-agent
+
+    - name: "Configuring consul systemd"
+      ansible.builtin.template:
+        src: consul.service.j2
+        dest: "/etc/systemd/system/consul.service"
+        owner: "{{ consul_agent_user }}"
+        group: "{{ consul_agent_group }}"
+        mode: "0644"
+      notify:
+        - Reload systemd
+        - Restart consul-agent
 
 - name: "Configuring consul"
   ansible.builtin.template:
@@ -46,43 +69,20 @@
     dest: "{{ consul_agent_config_dir }}/consul.hcl"
     owner: "{{ consul_agent_user }}"
     group: "{{ consul_agent_group }}"
-    mode: '0644'
-  become: true
-  when:
-    - consul_agent_config is defined
-    - consul_agent_config | length > 0
-    - consul_agent_manage_config | bool
-    - consul_agent_bin_install | bool
+    mode: "0644"
   notify: Restart consul-agent
+  when: consul_agent_config is defined and consul_agent_config | length > 0
 
-- name: "Create consul.d file"
+- name: "Create consul.d files"
   ansible.builtin.template:
     src: consul_config_d.json.j2
     dest: "{{ consul_agent_config_dir }}/{{ item }}.json"
     owner: "{{ consul_agent_user }}"
     group: "{{ consul_agent_group }}"
-    mode: '0644'
-  with_items:
-    "{{ consul_agent_config_d }}"
+    mode: "0644"
+  with_items: "{{ consul_agent_config_d }}"
   notify: Restart consul-agent
-  when:
-    - consul_agent_config_d is defined
-    - consul_agent_config_d | length > 0
-
-- name: "Configuring consul systemd"
-  ansible.builtin.template:
-    src: consul.service.j2
-    dest: "/etc/systemd/system/consul.service"
-    owner: "{{ consul_agent_user }}"
-    group: "{{ consul_agent_group }}"
-    mode: '0644'
-  become: true
-  when:
-    - consul_agent_manage_config | bool
-    - consul_agent_bin_install | bool
-  notify:
-    - Reload systemd
-    - Restart consul-agent
+  when: consul_agent_config_d is defined and consul_agent_config_d | length > 0
 
 - name: "Start consul-agent"
   ansible.builtin.service:
@@ -90,6 +90,4 @@
     name: consul
     state: started
     enabled: true
-  when:
-    - consul_agent_manage_config | bool
-    - consul_agent_bin_install | bool
+  when: consul_agent_start_service
