@@ -31,6 +31,13 @@ provisioner:
   connection_options:
     ansible_remote_tmp: /tmp
     ansible_python_interpreter: auto_silent
+  config_options:
+    defaults:
+      callbacks_enabled: timer, profile_tasks, profile_roles
+      verbosity: 4
+    ssh_connection:
+      pipelining: true
+  log: true
   playbooks:
     prepare: prepare.yml
     converge: playbook.yml

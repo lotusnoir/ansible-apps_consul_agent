@@ -22,6 +22,7 @@
 ## Description
 
 Install and configure consul agent
+
 ## Requirements
 
 none
@@ -35,7 +36,6 @@ With default variables, this role assume you will just install consul agent bina
 ## Examples
 
 Install agent with a node_exporter configuration
-
 
         ---
         - hosts: apps_consul_agent
@@ -66,8 +66,6 @@ Install agent with a node_exporter configuration
                         interval: 1s
                         timeout: 900ms
                         failures_before_critical: 3
-
-
 
 ## License
 
