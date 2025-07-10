@@ -23,6 +23,10 @@
 
 Install and configure consul agent
 
+install time with repo = 1/run 58.58s - 2/run 9.84s
+install time with src / local = 1/run 30.75s - 2/run 10.73s
+install time with src / internet / host = 30.39s
+
 ## Requirements
 
 none

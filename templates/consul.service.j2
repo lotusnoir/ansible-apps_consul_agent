@@ -11,7 +11,7 @@ ConditionFileNotEmpty={{ consul_agent_config_dir }}/consul.hcl
 EnvironmentFile=-/etc/default/consul
 User=consul
 Group=consul
-ExecStart=/usr/bin/consul agent -config-dir={{ consul_agent_config_dir }} {{ consul_agent_systemd_args | default("")}}
+ExecStart={{ consul_agent_install_dir }}/{% if consul_agent_symlink_name | length > 0 %}{{ consul_agent_symlink_name }}{% else %}{{ consul_agent_bin_name }}{% endif %} agent -config-dir={{ consul_agent_config_dir }} {{ consul_agent_systemd_args | default("")}}
 ExecReload=/bin/kill --signal HUP $MAINPID
 KillMode=process
 KillSignal=SIGTERM

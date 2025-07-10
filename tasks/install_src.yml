@@ -1,0 +1,103 @@
+---
+- name: "Get current version"
+  ansible.builtin.shell: |
+    set -o pipefail
+    {{ consul_agent_install_dir }}/consul --version | grep -oP 'Consul v\K[0-9.]+'
+  args:
+    executable: /bin/bash
+  changed_when: false
+  register: __installed_version
+  when: __installed_bin.stat.exists
+
+- name: "Install tasks"
+  when: (not __installed_bin.stat.exists) or (__installed_version is defined and consul_agent_version not in __installed_version.stdout) or consul_agent_install_force
+  block:
+    - name: "Create user"
+      ansible.builtin.include_tasks: create_user.yml
+      when: consul_agent_user != "root"
+
+    - name: "Create config dir"
+      ansible.builtin.file:
+        path: "{{ item | safe | trim }}"
+        state: directory
+        owner: "{{ consul_agent_user }}"
+        group: "{{ consul_agent_group }}"
+        mode: "0755"
+      loop:
+        - "{{ consul_agent_data_dir }}"
+        - "{{ consul_agent_config_dir }}"
+        - "/tmp/{{ role_path | basename }}"
+
+    - name: "Installing requirements"
+      ansible.builtin.package:
+        name:
+          - unzip
+        state: present
+      become: true
+      register: pkg_result
+      retries: 12
+      delay: 10
+      until: pkg_result is success
+
+    - name: "Copy local binary"
+      ansible.builtin.copy:
+        src: "{{ consul_agent_local_files }}"
+        dest: "/tmp/{{ consul_agent_pkg_name }}"
+        mode: "0755"
+      when: consul_agent_install_origin == "local"
+
+    - name: "Download binary"
+      ansible.builtin.get_url:
+        url: "{{ consul_agent_dl_url }}"
+        dest: "/tmp/{{ consul_agent_pkg_name }}"
+        timeout: 60
+        mode: "0644"
+      when:
+        - consul_agent_install_origin == "internet"
+        - consul_agent_dl_executor == "host"
+
+    - name: "Download binary by localhost"
+      ansible.builtin.get_url:
+        url: "{{ consul_agent_dl_url }}"
+        dest: "/tmp/{{ consul_agent_pkg_name }}"
+        timeout: 60
+        mode: "0644"
+      delegate_to: localhost
+      when:
+        - consul_agent_install_origin == "internet"
+        - consul_agent_dl_executor == "localhost"
+
+    - name: "Copy local binary"
+      ansible.builtin.copy:
+        src: "/tmp/{{ consul_agent_pkg_name }}"
+        dest: "/tmp/{{ consul_agent_pkg_name }}"
+        mode: "0755"
+      when:
+        - consul_agent_install_origin == "internet"
+        - consul_agent_dl_executor == "localhost"
+
+    - name: "Unarchive"
+      ansible.builtin.unarchive:
+        src: "/tmp/{{ consul_agent_pkg_name }}"
+        dest: "/tmp/{{ role_path | basename }}"
+        remote_src: true
+        mode: "0644"
+
+    - name: "Install binary"
+      ansible.builtin.copy:
+        src: "/tmp/{{ role_path | basename }}/consul"
+        dest: "{{ consul_agent_install_dir }}/{{ consul_agent_bin_name }}"
+        remote_src: true
+        owner: "{{ consul_agent_user }}"
+        group: "{{ consul_agent_group }}"
+        mode: "0755"
+      notify: Restart consul-agent
+
+    - name: "Create symlink to current version"
+      ansible.builtin.file:
+        src: "{{ consul_agent_install_dir }}/{{ consul_agent_bin_name }}"
+        dest: "{{ consul_agent_symlink_name }}"
+        state: link
+        force: true
+      notify: Restart consul-agent
+      when: consul_agent_symlink_name is defined and consul_agent_symlink_name | length > 0
