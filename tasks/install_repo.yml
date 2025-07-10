@@ -12,7 +12,6 @@
               - software-properties-common
               - apt-transport-https
             update_cache: true
-          when: ansible_os_family == 'Debian'
 
         - name: "Download GPG key"
           ansible.builtin.get_url:
@@ -36,6 +35,28 @@
           ansible.builtin.apt:
             name: consul
             update_cache: true
+            state: present
+
+    - name: "Redhat tasks"
+      when: ansible_os_family == 'RedHat'
+      block:
+        - name: Ensure yum-utils is installed
+          ansible.builtin.dnf:
+            name: yum-utils
+            state: present
+
+        - name: Add HashiCorp YUM repository
+          ansible.builtin.yum_repository:
+            name: hashicorp
+            description: "HashiCorp Stable - $basearch"
+            baseurl: https://rpm.releases.hashicorp.com/RHEL/$releasever/$basearch/stable
+            gpgcheck: true
+            gpgkey: https://rpm.releases.hashicorp.com/gpg
+            enabled: true
+
+        - name: Install Consul
+          ansible.builtin.dnf:
+            name: consul
             state: present
 
     - name: "Create config dir"
