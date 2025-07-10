@@ -16,7 +16,7 @@
       ansible.builtin.include_tasks: create_user.yml
       when: consul_agent_user != "root"
 
-    - name: "Create config dir"
+    - name: "Create dirs"
       ansible.builtin.file:
         path: "{{ item | safe | trim }}"
         state: directory
@@ -26,7 +26,7 @@
       loop:
         - "{{ consul_agent_data_dir }}"
         - "{{ consul_agent_config_dir }}"
-        - "/tmp/{{ role_path | basename }}"
+        - "{{ consul_agent_temp_dir }}/{{ role_path | basename }}"
 
     - name: "Installing requirements"
       ansible.builtin.package:
@@ -42,14 +42,14 @@
     - name: "Copy local binary"
       ansible.builtin.copy:
         src: "{{ consul_agent_local_files }}"
-        dest: "/tmp/{{ consul_agent_pkg_name }}"
+        dest: "/{{ consul_agent_temp_dir }}{{ consul_agent_pkg_name }}"
         mode: "0755"
       when: consul_agent_install_origin == "local"
 
-    - name: "Download binary"
+    - name: "Download binary by host"
       ansible.builtin.get_url:
         url: "{{ consul_agent_dl_url }}"
-        dest: "/tmp/{{ consul_agent_pkg_name }}"
+        dest: "{{ consul_agent_temp_dir }}/{{ consul_agent_pkg_name }}"
         timeout: 60
         mode: "0644"
       when:
@@ -59,7 +59,7 @@
     - name: "Download binary by localhost"
       ansible.builtin.get_url:
         url: "{{ consul_agent_dl_url }}"
-        dest: "/tmp/{{ consul_agent_pkg_name }}"
+        dest: "{{ consul_agent_temp_dir }}/{{ consul_agent_pkg_name }}"
         timeout: 60
         mode: "0644"
       delegate_to: localhost
@@ -69,8 +69,8 @@
 
     - name: "Copy local binary"
       ansible.builtin.copy:
-        src: "/tmp/{{ consul_agent_pkg_name }}"
-        dest: "/tmp/{{ consul_agent_pkg_name }}"
+        src: "{{ consul_agent_temp_dir }}/{{ consul_agent_pkg_name }}"
+        dest: "{{ consul_agent_temp_dir }}/{{ consul_agent_pkg_name }}"
         mode: "0755"
       when:
         - consul_agent_install_origin == "internet"
@@ -78,14 +78,14 @@
 
     - name: "Unarchive"
       ansible.builtin.unarchive:
-        src: "/tmp/{{ consul_agent_pkg_name }}"
-        dest: "/tmp/{{ role_path | basename }}"
+        src: "{{ consul_agent_temp_dir }}/{{ consul_agent_pkg_name }}"
+        dest: "{{ consul_agent_temp_dir }}/{{ role_path | basename }}"
         remote_src: true
         mode: "0644"
 
     - name: "Install binary"
       ansible.builtin.copy:
-        src: "/tmp/{{ role_path | basename }}/consul"
+        src: "{{ consul_agent_temp_dir }}/{{ role_path | basename }}/consul"
         dest: "{{ consul_agent_install_dir }}/{{ consul_agent_bin_name }}"
         remote_src: true
         owner: "{{ consul_agent_user }}"

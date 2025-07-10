@@ -45,7 +45,7 @@
   notify: Restart consul-agent
   when: consul_agent_config_d is defined and consul_agent_config_d | length > 0
 
-- name: "Start consul-agent"
+- name: "Start service"
   ansible.builtin.service:
     daemon_reload: true
     name: consul

@@ -1,6 +1,6 @@
 ---
 ### Install
-consul_agent_install_method: src
+consul_agent_install_method: src  # or repo
 consul_agent_install_force: false
 consul_agent_start_service: true
 
@@ -19,13 +19,14 @@ consul_agent_version: "1.21.2"
 consul_agent_distrib: "linux"
 consul_agent_pkg_name: "consul_{{ consul_agent_version }}_{{ consul_agent_distrib }}_{{ consul_agent_arch }}.zip"
 consul_agent_dl_url: "https://releases.hashicorp.com/consul/{{ consul_agent_version }}/{{ consul_agent_pkg_name }}"
+consul_agent_temp_dir: "/tmp"
 
 # if consul_agent_install_origin: local
 consul_agent_local_files: "~/Downloads/shared-files/{{ role_path | basename }}/{{ consul_agent_pkg_name }}"
 
 # where is installed binary
-# if you decide to use consul_agent_bin_name: with version you can create a symlink to have multiple version installed. empty = no symlink
-consul_agent_symlink_name: ""
+# if you decide to use consul_agent_bin_name: with version you can create a symlink to have multiple version installed. empty or same as bin_name = no symlink
+consul_agent_symlink_name: "{{ consul_agent_bin_name }}"
 
 ### Config
 consul_agent_systemd_args: ""
