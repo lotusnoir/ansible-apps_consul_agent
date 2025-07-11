@@ -34,9 +34,12 @@ provisioner:
   config_options:
     defaults:
       callbacks_enabled: timer, profile_tasks, profile_roles
-      verbosity: 4
+      verbosity: 3
+      forks: 20
+      host_key_checking: false
     ssh_connection:
       pipelining: true
+      ssh_args: -o ControlMaster=auto -o ControlPersist=600s
   log: true
   playbooks:
     prepare: prepare.yml

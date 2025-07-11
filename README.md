@@ -23,9 +23,11 @@
 
 Install and configure consul agent
 
-install time with repo = 1/run 58.58s - 2/run 9.84s
-install time with src / local = 1/run 30.75s - 2/run 10.73s
-install time with src / internet / host = 30.39s
+install time with repo = 1/run 58.58s -  2/run 9.84s
+install time with src / local = 1/run  30.75s - 2/run 10.73s
+install time with src / internet / host = 1/run 30.39s - 2/run 11.23s
+install time with src / internet / localhost = 1/run 33.59s - 2/run 11.47s
+
 
 ## Requirements
 
@@ -40,6 +42,7 @@ With default variables, this role assume you will just install consul agent bina
 ## Examples
 
 Install agent with a node_exporter configuration
+
 
         ---
         - hosts: apps_consul_agent
@@ -70,6 +73,7 @@ Install agent with a node_exporter configuration
                         interval: 1s
                         timeout: 900ms
                         failures_before_critical: 3
+
 
 ## License
 

@@ -100,4 +100,4 @@
         state: link
         force: true
       notify: Restart consul-agent
-      when: consul_agent_symlink_name is defined and consul_agent_symlink_name | length > 0
+      when: consul_agent_symlink_name is defined and (consul_agent_symlink_name | length > 0 or consul_agent_symlink_name != consul_agent_bin_name)
