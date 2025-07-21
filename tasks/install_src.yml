@@ -42,7 +42,7 @@
     - name: "Copy local binary"
       ansible.builtin.copy:
         src: "{{ consul_agent_local_files }}"
-        dest: "/{{ consul_agent_temp_dir }}{{ consul_agent_pkg_name }}"
+        dest: "{{ consul_agent_temp_dir }}/{{ consul_agent_pkg_name }}"
         mode: "0755"
       when: consul_agent_install_origin == "local"
 
