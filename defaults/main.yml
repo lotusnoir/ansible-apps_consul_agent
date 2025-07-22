@@ -15,7 +15,7 @@ consul_agent_group: consul
 consul_agent_user: consul
 consul_agent_install_origin: internet  # or internet
 consul_agent_dl_executor: host  # or localhost
-consul_agent_version: "1.21.2"
+consul_agent_version: "1.21.2"  # or latest
 consul_agent_distrib: "linux"
 consul_agent_pkg_name: "consul_{{ consul_agent_version }}_{{ consul_agent_distrib }}_{{ consul_agent_arch }}.zip"
 consul_agent_dl_url: "https://releases.hashicorp.com/consul/{{ consul_agent_version }}/{{ consul_agent_pkg_name }}"
