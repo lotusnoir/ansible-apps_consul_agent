@@ -1,6 +1,7 @@
 ---
 stages:
   - molecule
+  - changes
   - push
 
 variables:
@@ -111,13 +112,12 @@ molecule_ubuntu24:
   script:
     - MOLECULE_DISTRIB=ubuntu24 molecule test
 
-
-##################################################
-# PUSH CODE WHEN ALL TEST OK
-##################################################
-push_src_on_github:
-  stage: push
-  image: alpine:latest
+######################################################
+# GENERATE CHANGELOG FILE
+######################################################
+changelog:
+  stage: changes
+  image: node:19
   needs:
     - job: molecule_debian12
       optional: true
@@ -143,6 +143,23 @@ push_src_on_github:
       optional: true
     - job: molecule_ubuntu24
       optional: true
+  artifacts:
+    paths:
+      - CHANGELOG.md
+    expire_in: 1 day
+  before_script:
+    - npm install -g auto-changelog
+  script:
+    - auto-changelog -t keepachangelog --sort-commits date-desc --hide-empty-releases --hide-credit -b 50
+
+##################################################
+# PUSH CODE WHEN ALL TEST OK
+##################################################
+push_src_on_github:
+  stage: push
+  image: alpine:latest
+  needs:
+    - changelog
   before_script:
     - apk add git openssh-client
     - eval $(ssh-agent -s)
