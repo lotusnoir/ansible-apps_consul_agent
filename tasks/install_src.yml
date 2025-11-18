@@ -20,13 +20,15 @@
 
 - name: "Replace version fact to latest"
   ansible.builtin.set_fact:
-    consul_agent_version: "{{ __github_latest.json.tag_name | default(_consul_agent_default_version) | replace('v', '') }}"
+    consul_agent_version: "{{ __github_latest.json.tag_name | replace('v', '') }}"
   when:
     - consul_agent_version == 'latest'
     - consul_agent_install_origin == "internet"
 
 - name: "Install tasks"
-  when: (not __installed_bin.stat.exists) or (__installed_version is defined and consul_agent_version not in __installed_version.stdout) or consul_agent_install_force
+  when: not __installed_bin.stat.exists or
+      (__installed_version is defined and consul_agent_version not in __installed_version.stdout) or
+      consul_agent_install_force
   block:
     - name: "Create user"
       ansible.builtin.include_tasks: create_user.yml

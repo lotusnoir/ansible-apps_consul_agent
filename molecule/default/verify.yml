@@ -17,7 +17,7 @@
               - "ansible_facts.services['consul.service'].state == 'running'"
 
         - name: Check if service is runned by good user
-          ansible.builtin.shell: "pgrep -u consul consul"
+          ansible.builtin.command: "pgrep -u consul consul"
           register: process_check
           ignore_errors: true
           changed_when: false
