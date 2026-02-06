@@ -3,7 +3,7 @@
   when: (not __installed_bin.stat.exists) or consul_agent_install_force
   block:
     - name: "Debian tasks"
-      when: ansible_os_family == 'Debian'
+      when: ansible_facts.os_family == 'Debian'
       block:
         - name: "Ensure required tools are installed"
           ansible.builtin.apt:
@@ -19,15 +19,17 @@
             dest: /tmp/hashicorp.gpg
             mode: "0644"
 
-        - name: Convert GPG key to keyring format
+        - name: "Convert GPG key to keyring format"
           ansible.builtin.command: >
             gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg /tmp/hashicorp.gpg
           args:
             creates: /usr/share/keyrings/hashicorp-archive-keyring.gpg
 
-        - name: "Add repository"
+        - name: "Add HashiCorp repository"
           ansible.builtin.apt_repository:
-            repo: "deb [arch={{ consul_agent_arch }} signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+            repo: >-
+              deb [arch={{ consul_agent_arch }} signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg]
+              https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main
             filename: hashicorp
             state: present
 
@@ -38,7 +40,7 @@
             state: present
 
     - name: "Redhat tasks"
-      when: ansible_os_family == 'RedHat'
+      when: ansible_facts.os_family == 'RedHat'
       block:
         - name: Ensure yum-utils is installed
           ansible.builtin.dnf:
