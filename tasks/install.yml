@@ -41,6 +41,7 @@
     owner: root
     group: root
     mode: "0644"
+  when: consul_agent_start_service
   notify:
     - Reload systemd
     - Restart consul-agent
