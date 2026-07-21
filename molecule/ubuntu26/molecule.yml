@@ -6,7 +6,7 @@ driver:
   name: docker
 
 scenario:
-  name: debian10
+  name: ubuntu26
   test_sequence:
     - cleanup
     - destroy
@@ -21,8 +21,8 @@ scenario:
     - destroy
 
 platforms:
-  - name: apps-consul-agent-debian10
-    image: lotusnoir/ansible_molecule_test_images:debian10
+  - name: apps-consul-agent-ubuntu26
+    image: lotusnoir/ansible_molecule_test_images:ubuntu26
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     cgroupns_mode: host
     pre_build_image: true

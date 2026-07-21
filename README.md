@@ -52,13 +52,18 @@ Install agent with a node_exporter configuration
             - role: ansible-apps_consul_agent
           vars:
             consul_agent_manage_config: true
-            consul_agent_systemd_args: '-advertise "{{ ansible_default_ipv4.address }}" -bind "{{ ansible_default_ipv4.address }}" -client "0.0.0.0" -datacenter "mysite" -retry-join "10.1.1.1"'
             consul_client_config: |
+              node_name       = "test_vm"
+              datacenter      = "mysite"
+              bind_addr       = "127.0.0.1"
+              advertise_addr  = "127.0.0.1"
+              client_addr     = "127.0.0.1"
               data_dir = "{{ consul_agent_data_dir }}"
               leave_on_terminate = false
               disable_update_check = true
               log_json = true
               log_level = "warn"
+              retry_join = ["10.1.1.1"]
             consul_agent_config_d:
               exporter:
                 services:

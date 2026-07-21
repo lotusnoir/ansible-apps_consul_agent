@@ -42,11 +42,6 @@ molecule_debian11:
   image: lotusnoir/molecule_play:2.18.11
   script:
     - MOLECULE_DISTRIB=debian11 molecule test
-molecule_debian10:
-  <<: *molecule_job_template
-  image: lotusnoir/molecule_play:2.15.13
-  script:
-    - MOLECULE_DISTRIB=debian10 molecule test
 molecule_debian13:
   <<: *molecule_job_template
   image: lotusnoir/molecule_play:2.18.11
@@ -120,6 +115,11 @@ molecule_ubuntu24:
   image: lotusnoir/molecule_play:2.18.11
   script:
     - MOLECULE_DISTRIB=ubuntu24 molecule test
+molecule_ubuntu26:
+  <<: *molecule_job_template
+  image: lotusnoir/molecule_play:2.18.11
+  script:
+    - MOLECULE_DISTRIB=ubuntu26 molecule test
 
 ######################################################
 # GENERATE CHANGELOG FILE
@@ -131,8 +131,6 @@ changelog:
     - job: molecule_debian12
       optional: true
     - job: molecule_debian11
-      optional: true
-    - job: molecule_debian10
       optional: true
     - job: molecule_debian13
       optional: true
@@ -159,6 +157,8 @@ changelog:
     - job: molecule_ubuntu22
       optional: true
     - job: molecule_ubuntu24
+      optional: true
+    - job: molecule_ubuntu26
       optional: true
   artifacts:
     paths:

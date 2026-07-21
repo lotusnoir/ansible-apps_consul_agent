@@ -12,11 +12,11 @@ galaxy_info:
         - "focal"
         - "jammy"
         - "noble"
+        - "resolute"
     - name: "Debian"
       versions:
-        - "buster"
-        - "bullseye"
         - "bookworm"
+        - "bullseye"
         - "trixie"
     - name: "Rocky"
       versions:
